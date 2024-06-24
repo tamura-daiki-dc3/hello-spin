@@ -1,0 +1,35 @@
+spin_manifest_version = 2
+
+[application]
+name = "hello-spin"
+version = "0.1.0"
+authors = ["Daiki Tamura <dtamura23@outlook.jp>"]
+description = ""
+
+[[trigger.http]]
+route = "/..."
+component = "hello-go"
+
+[[trigger.http]]
+route = "/go"
+component = "hello-go"
+
+[component.hello-go]
+source = "hello-go/main.wasm"
+allowed_outbound_hosts = []
+[component.hello-go.build]
+command = "tinygo build -target=wasi -gc=leaking -no-debug -o main.wasm main.go"
+workdir = "hello-go"
+watch = ["**/*.go", "go.mod"]
+
+[[trigger.http]]
+route = "/rust"
+component = "hello-rust"
+
+[component.hello-rust]
+source = "hello-rust/target/wasm32-wasi/release/hello_rust.wasm"
+allowed_outbound_hosts = []
+[component.hello-rust.build]
+command = "cargo build --target wasm32-wasi --release"
+workdir = "hello-rust"
+watch = ["src/**/*.rs", "Cargo.toml"]

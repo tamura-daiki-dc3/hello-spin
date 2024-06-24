@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-spin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-spin
+  template:
+    metadata:
+      labels:
+        app: hello-spin
+    spec:
+      runtimeClassName: wasmtime-spin-v2
+      containers:
+        - name: hello-pin
+          image: k3d-myregistry.localhost:12345/hello-spin:latest
+          command: ["/"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          ports:
+            - containerPort: 80
+              name: http-app
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-spin
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: hello-spin
