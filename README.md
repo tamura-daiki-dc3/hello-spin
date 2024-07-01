@@ -77,14 +77,28 @@ https://www.spinkube.dev/docs/spin-operator/quickstart/
 
 ```sh
 # ローカルレジストリの作成
-k3d registry create myregistry.localhost --port 12345
+k3d registry create registry.localhost --port 5000
 
 # クラスタの作成
 k3d cluster create wasm-cluster \
   --image ghcr.io/spinkube/containerd-shim-spin/k3d:v0.14.1 \
   --port "8081:80@loadbalancer" \
   --agents 2 \
-  --registry-use k3d-myregistry.localhost:12345
+  --registry-use k3d-registry.localhost:5000
+
+# 自前イメージの場合
+k3d cluster create wasm-cluster \
+  --image k3swithshims:latest \
+  --port "8081:80@loadbalancer" \
+  --agents 1 \
+  --registry-use k3d-registry.localhost:5000
+```
+
+
+Instana Agentのために、machine-id を適当に作りに行く
+```sh
+docker exec -it k3d-wasm-cluster-agent-0 /bin/sh -c "od -An -tx4 -N16 /dev/random | tr -d ' ' > /etc/machine-id"
+docker exec -it k3d-wasm-cluster-server-0 /bin/sh -c "od -An -tx4 -N16 /dev/random | tr -d ' ' > /etc/machine-id"
 ```
 
 **Podが全てRunning/Completedになるまで待ったほうが良い**
@@ -124,10 +138,10 @@ spin build
 ```sh
 # イメージをデプロイ
 # -k は insecure（証明書エラー回避）のため
-spin registry push -k localhost:12345/hello-spin:latest
+spin registry push -k localhost:5000/hello-spin:latest
 
 # アプリデプロイ
-spin kube deploy --from k3d-myregistry.localhost:12345/hello-spin:latest
+spin kube deploy --from registry.localhost:5000/hello-spin:latest
 ```
 
 
