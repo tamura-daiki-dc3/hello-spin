@@ -14,7 +14,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintln(w, "OK")
 	})
-	err := http.ListenAndServe(":8083", nil)
+	err := http.ListenAndServe(":3000", nil)
 	for err != nil {
 		fmt.Printf("error: %s\r\n", err.Error())
 		time.Sleep(5 * time.Second)

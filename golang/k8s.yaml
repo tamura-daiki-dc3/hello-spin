@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: golang-mandelbrot
+spec:
+  type: ClusterIP
+  selector:
+    app: golang-mandelbrot
+  ports:
+    - name: http
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-mandelbrot
+spec:
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 5
+      maxUnavailable: 0
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golang-mandelbrot
+  template:
+    metadata:
+      labels:
+        app: golang-mandelbrot
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: app
+          # image: asia-docker.pkg.dev/sre-rc/containers/golang-mandelbrot:latest
+          image: k3d-registry.localhost:5000/golang:latest
+          ports:
+            - containerPort: 3000
+          env:
+
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTP
+          imagePullPolicy: Always
+          # resources:
+          #   requests:
+          #     cpu: 100m
+          #     memory: 200Mi
+          #   limits:
+          #     cpu: 100m
+          #     memory: 200Mi
