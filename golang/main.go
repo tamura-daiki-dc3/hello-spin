@@ -1,19 +1,27 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/jpeg"
 	"net/http"
-
-	spinhttp "github.com/fermyon/spin/sdk/go/v2/http"
+	"time"
 )
 
-func init() {
-	spinhttp.Handle(get_mandelbrot)
+func main() {
+	http.HandleFunc("/jpeg", get_mandelbrot)
+	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintln(w, "OK")
+	})
+	err := http.ListenAndServe(":8083", nil)
+	for err != nil {
+		fmt.Printf("error: %s\r\n", err.Error())
+		time.Sleep(5 * time.Second)
+	}
 }
 
-func get_mandelbrot(w http.ResponseWriter, r *http.Request) {
+func get_mandelbrot(w http.ResponseWriter, req *http.Request) {
 	const (
 		xmin, ymin, xmax, ymax = -1.5, -1.0, +0.5, +1.0
 		width, height          = 1200, 1200
@@ -21,7 +29,6 @@ func get_mandelbrot(w http.ResponseWriter, r *http.Request) {
 	)
 	img := generate_mandelbrot_img(width, height, xmin, xmax, ymin, ymax, max_iter)
 	jpeg.Encode(w, img, &jpeg.Options{Quality: 100}) // NOTE: ignoring errors
-
 }
 
 func get_n_diverged(x0 float64, y0 float64, max_iter int) int {
@@ -62,5 +69,3 @@ func generate_mandelbrot_img(canvas_w int, canvas_h int, x_min float64, x_max fl
 	return img
 
 }
-
-func main() {}

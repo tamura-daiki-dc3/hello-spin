@@ -15,7 +15,7 @@ spec:
       runtimeClassName: wasmtime-spin-v2
       containers:
         - name: hello-pin
-          image: k3d-myregistry.localhost:12345/hello-spin:latest
+          image: k3d-registry.localhost:5000/hello-spin:latest
           command: ["/"]
           resources:
             requests:
@@ -28,6 +28,15 @@ spec:
             - containerPort: 80
               name: http-app
               protocol: TCP
+
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 80
+              scheme: HTTP
 ---
 apiVersion: v1
 kind: Service
