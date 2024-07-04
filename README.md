@@ -260,27 +260,6 @@ docker でビルドしたwasmイメージは見えて起動もできた
 sudo ctr --namespace moby images ls
 ```
 
-
-### Dockerでwasmイメージをビルドする
-
-Dockerfileは↓を参考に作成。
-
-https://github.com/spinkube/containerd-shim-spin/blob/main/images/spin/Dockerfile
-
-
-ビルド
-```sh
-docker buildx build --provenance=false --platform=wasi/wasm -t localhost:5000/hello-spin:latest .
-```
-
-起動
-```sh
-docker run --rm  --runtime io.containerd.spin.v2 \
-  --platform wasi/wasm  \
-  localhost:5000/hello-spin:latest /
-```
-
-
 https://docs.docker.com/engine/alternative-runtimes/
 
 ```sh
@@ -306,3 +285,23 @@ Status: Image is up to date for ghcr.io/spinkube/containerd-shim-spin/examples/s
 docker: Error response from daemon: No such image: ghcr.io/spinkube/containerd-shim-spin/examples/spin-rust-hello:v0.13.0.
 ```
  -> 動かない・・・ (なぜpullはできるのに No such image？)
+
+### Dockerでwasmイメージをビルドする
+
+Dockerfileは↓を参考に作成。
+
+https://github.com/spinkube/containerd-shim-spin/blob/main/images/spin/Dockerfile
+
+
+ビルド
+```sh
+docker buildx build --provenance=false --platform=wasi/wasm -t localhost:5000/hello-spin:latest .
+```
+
+起動
+```sh
+docker run --rm  --runtime io.containerd.spin.v2 \
+  --platform wasi/wasm  \
+  localhost:5000/hello-spin:latest /
+```
+
