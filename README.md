@@ -9,6 +9,12 @@ Hello Spin(WebAssebly) on Local k8s
 https://www.spinkube.dev/docs/overview/
 
 
+ディレクトリ構成
+-------------------
+* simple-golang: 通常のGo実装
+* spin: spinフレームワークを利用したWebAssembly
+
+
 初期設定
 ----------------------
 
@@ -68,6 +74,20 @@ https://tinygo.org/getting-started/install/linux/
 ```sh
 wget https://github.com/tinygo-org/tinygo/releases/download/v0.32.0/tinygo_0.32.0_amd64.deb
 sudo dpkg -i tinygo_0.32.0_amd64.deb
+```
+
+### Containerd Image Storeの有効化
+
+https://docs.docker.com/storage/containerd/
+
+```sh
+sudo sh -c 'cat << EOF >> /etc/docker/daemon.json
+{
+  "features": {
+    "containerd-snapshotter": true
+  }
+}
+EOF'
 ```
 
 
@@ -134,7 +154,7 @@ helm install spin-operator \
 kubectl apply -f https://github.com/spinkube/spin-operator/releases/download/v0.2.0/spin-operator.shim-executor.yaml
 ```
 
-ビルド&デプロイ
+Spin ビルド&デプロイ
 ---------------------
 
 ### アプリケーションのビルド(Wasmファイルの作成)
@@ -154,20 +174,6 @@ spin kube deploy --from k3d-registry.localhost:5000/hello-spin:latest
 
 * spinapp というCRDからDeploymentが作成されているので、spinappを消さない限り、deploymentを消してもしぶとく蘇ってくる
 * runtimeClassを指定すれば動作するので、 `kubectl apply -f spin.yaml` でも同様に起動可能
-
-### AKSにデプロイする場合（未解決）
-
-```sh
-# Azure Container Registryでアクセスキーを作成する
-# TOKEN=
-spin registry login -u tamura -p $TOKEN tamura.azurecr.io
-spin registry push tamura.azurecr.io/hello-spin:latest
-```
-
-*AKSだと runtimeclassが wasmtime-spin-v1 しかなくて、これだと動かなかった*
-
-
-
 
 アクセス確認
 --------------------------
@@ -195,3 +201,108 @@ k3d cluster delete wasm-cluster
 ```sh
 k3d registry delete myregistry.localhost
 ```
+
+その他、メモ
+----------------------
+
+
+### AKSにデプロイする場合（未解決）
+
+```sh
+# Azure Container Registryでアクセスキーを作成する
+# TOKEN=
+spin registry login -u tamura -p $TOKEN tamura.azurecr.io
+spin registry push tamura.azurecr.io/hello-spin:latest
+```
+
+*AKSだと runtimeclassが wasmtime-spin-v1 しかなくて、これだと動かなかった*
+
+
+### Google Artifact Registryにpushする
+
+```sh
+cat key.json | base64 -w0 | spin registry login -u _json_key_base64 --password-stdin https://asia-docker.pkg.dev
+```
+-> 動かない・・・
+
+
+
+```sh
+PASS=$(cat sre-rc-0e9272e54f68.json | base64 -w0)
+sudo ctr -n moby  images push -u "_json_key_base64:$PASS" asia-docker.pkg.dev/sre-rc/containers/hello-spin:latest
+```
+-> pushできた！
+
+
+### ローカルでもWasmイメージ動かせないのか？
+
+Containerd Image Storeの有効化
+
+https://docs.docker.com/storage/containerd/
+
+
+* docker pullはできるようになった
+```sh
+$ docker pull localhost:5000/hello-spin:latest
+latest: Pulling from hello-spin
+Digest: sha256:517911ca622abf2d7ff4adcc4f847b121f58762b6fb6179663a2e10862fb6a45
+Status: Image is up to date for localhost:5000/hello-spin:latest
+localhost:5000/hello-spin:latest
+```
+-> しかし、docker images では何故か見えない
+* これまでのイメージやコンテナが全く見えなくなった
+
+spin registryコマンドで作成されたイメージがこうなる模様。
+docker でビルドしたwasmイメージは見えて起動もできた
+
+* wasmイメージは、ctrで見れた
+```sh
+sudo ctr --namespace moby images ls
+```
+
+
+### Dockerでwasmイメージをビルドする
+
+Dockerfileは↓を参考に作成。
+
+https://github.com/spinkube/containerd-shim-spin/blob/main/images/spin/Dockerfile
+
+
+ビルド
+```sh
+docker buildx build --provenance=false --platform=wasi/wasm -t localhost:5000/hello-spin:latest .
+```
+
+起動
+```sh
+docker run --rm  --runtime io.containerd.spin.v2 \
+  --platform wasi/wasm  \
+  localhost:5000/hello-spin:latest /
+```
+
+
+https://docs.docker.com/engine/alternative-runtimes/
+
+```sh
+wget https://github.com/spinkube/containerd-shim-spin/releases/download/v0.14.1/containerd-shim-spin-v2-linux-x86_64.tar.gz
+tar -zxvf containerd-shim-spin-v2-linux-x86_64.tar.gz
+sudo mv ./containerd-shim-spin-v2 /usr/local/bin/
+```
+
+```sh
+docker run --rm \
+ --runtime io.containerd.spin.v2 \
+ --platform wasi/wasm \
+ localhost:5000/hello-spin:latest
+ ghcr.io/spinkube/containerd-shim-spin/examples/spin-rust-hello:v0.13.0
+```
+->
+
+```sh
+Unable to find image 'ghcr.io/spinkube/containerd-shim-spin/examples/spin-rust-hello:v0.13.0' locally
+v0.13.0: Pulling from spinkube/containerd-shim-spin/examples/spin-rust-hello
+Digest: sha256:ae7d03c04102437d9dd0dc2605c7b4112611d9c49fea1042b64f817fcaca512b
+Status: Image is up to date for ghcr.io/spinkube/containerd-shim-spin/examples/spin-rust-hello:v0.13.0
+docker: Error response from daemon: No such image: ghcr.io/spinkube/containerd-shim-spin/examples/spin-rust-hello:v0.13.0.
+```
+ -> 動かない・・・ (なぜpullはできるのに No such image？)

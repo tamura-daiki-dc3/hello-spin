@@ -12,7 +12,7 @@ import (
 func main() {
 	http.HandleFunc("/jpeg", get_mandelbrot)
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintln(w, "OK")
+		fmt.Fprintln(w, "OK!")
 	})
 	err := http.ListenAndServe(":3000", nil)
 	for err != nil {
