@@ -12,7 +12,7 @@ router.get('/', function (req, res, next) {
 
 
   var canvas = generateMandelbrotSet(width, height, x_min, x_max, y_min, y_max, max_iter);
-  const buffer = canvas.toBuffer('image/jpeg')
+  const buffer = canvas.toBuffer('image/jpeg', { quality: 1.00 })
 
 
 

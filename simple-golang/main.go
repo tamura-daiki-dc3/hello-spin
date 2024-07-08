@@ -28,6 +28,7 @@ func get_mandelbrot(w http.ResponseWriter, req *http.Request) {
 		max_iter               = 1<<7 - 1
 	)
 	img := generate_mandelbrot_img(width, height, xmin, xmax, ymin, ymax, max_iter)
+	w.Header().Set("content-type", "image/jpeg")
 	jpeg.Encode(w, img, &jpeg.Options{Quality: 100}) // NOTE: ignoring errors
 }
 
