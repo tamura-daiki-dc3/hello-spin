@@ -7,10 +7,8 @@ RUN go mod download
 COPY . .
 RUN go vet -v
 RUN go test -v
-
 RUN CGO_ENABLED=0 go build -o /go/bin/app
 
-FROM gcr.io/distroless/static-debian12
-
+FROM scratch
 COPY --from=build /go/bin/app /
 CMD ["/app"]
