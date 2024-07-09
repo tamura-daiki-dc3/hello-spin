@@ -1,0 +1,65 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins:
+            - "http://*"
+            - "https://*"
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlp/tempo:
+    endpoint: "tempo:4317"
+    tls:
+      insecure: true
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    tls:
+      insecure: true
+    send_metadata: true
+    resource_to_telemetry_conversion:
+      enabled: true
+
+processors:
+  batch:
+  filter:
+    metrics:
+      exclude:
+        match_type: strict
+        metric_names:
+          - queueSize
+
+connectors:
+  spanmetrics:
+    exemplars:
+      enabled: true
+      max_per_data_point: 10000
+    dimensions:
+      - name: http.url
+
+service:
+  telemetry:
+    logs:
+      level: INFO
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [spanmetrics, otlp/tempo]
+    metrics:
+      receivers: [otlp, spanmetrics]
+      processors: [filter, batch]
+      exporters: [prometheusremotewrite]
+
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]

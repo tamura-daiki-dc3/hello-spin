@@ -1,0 +1,54 @@
+---
+global:
+  scrape_interval: 1s
+  evaluation_interval: 1s
+  external_labels:
+    cluster: demo
+    namespace: demo
+
+
+rule_files:
+  - /etc/prometheus/rules.yaml
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "node"
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  - job_name: "process"
+    scrape_interval: 3s
+    scrape_timeout: 2s
+    static_configs:
+      - targets: ["process-exporter:9256"]
+
+  - job_name: "loki"
+    dns_sd_configs:
+      - names:
+          - loki
+        type: A
+        port: 3100
+
+  - job_name: "tempo"
+    static_configs:
+      - targets: ["tempo:3200"]
+
+  - job_name: otel-collector
+    static_configs:
+      - targets:
+          - "otel-collector:8888"
+
+# remote_write:
+#   - url: http://victoriametrics:8428/api/v1/write
+
+# remote_write:
+#   - url: http://mimir:9009/api/v1/push
+#     # Add X-Scope-OrgID header so that Mimir knows what tenant the remote write data should be stored in.
+#     # In this case, our tenant is "demo"
+#     headers:
+#       X-Scope-OrgID: demo
+#     send_exemplars: true
+

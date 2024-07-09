@@ -8,6 +8,6 @@ var app = express();
 
 app.use('/', healthzRouter);
 app.use('/healthz', healthzRouter);
-app.use('/jpeg', mandelbrotRouter);
+app.use('/nodejs/jpeg', mandelbrotRouter);
 
 module.exports = app;

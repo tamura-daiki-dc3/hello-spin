@@ -11,7 +11,7 @@ route = "/..."
 component = "healthz"
 
 [[trigger.http]]
-route = "/go"
+route = "/wasm/go"
 component = "hello-go"
 
 [component.hello-go]
@@ -23,7 +23,7 @@ workdir = "hello-go"
 watch = ["**/*.go", "go.mod"]
 
 [[trigger.http]]
-route = "/rust"
+route = "/wasm/rust"
 component = "hello-rust"
 
 [component.hello-rust]

@@ -1,0 +1,14 @@
+process_names:
+  - name: "{{.ExeBase}};{{.Username}};{{.Matches.cmdline}}"
+    comm:
+      - app # golang
+    cmdline: 
+    - (?P<cmdline>.*)
+  - name: "{{.ExeBase}};{{.Username}};{{.Matches.cmdline}}"
+    comm:
+      - node
+    cmdline: 
+    - (?P<cmdline>.*\/nodejs\/bin\/node.*)
+  - name: "{{.ExeBase}};{{.Username}};{{.Matches.cmdline}}"
+    cmdline: 
+    - (?P<cmdline>.*spin.*)

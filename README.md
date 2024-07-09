@@ -20,6 +20,12 @@ https://www.spinkube.dev/docs/overview/
 ３コンテナを起動する
 ---------------
 
+### docker compose
+```sh
+docker compose up -d
+```
+
+### 個別
 ```sh
 docker run -d --name wasm-spin -p 8084:80 --runtime io.containerd.spin.v2 \
   --platform wasi/wasm  \

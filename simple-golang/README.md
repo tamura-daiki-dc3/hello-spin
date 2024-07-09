@@ -2,7 +2,7 @@ Go実装
 =====================
 
 * 3000ポート
-* `/jpeg`: jpeg画像を返却
+* `/go/jpeg`: jpeg画像を返却
 * `/healthz` : ヘルスチェック(ReadinessProbe用)
 
 ```sh

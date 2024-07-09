@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/jpeg", get_mandelbrot)
+	http.HandleFunc("/go/jpeg", get_mandelbrot)
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintln(w, "OK!")
 	})
