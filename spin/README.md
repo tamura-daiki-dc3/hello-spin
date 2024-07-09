@@ -193,7 +193,7 @@ k3d cluster delete wasm-cluster
 
 レジストリの削除
 ```sh
-k3d registry delete myregistry.localhost
+k3d registry delete registry.localhost
 ```
 
 その他、メモ
