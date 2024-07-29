@@ -39,6 +39,18 @@ services:
     depends_on:
       - loki
 
+  proxy:
+    build: ./proxy
+    environment:
+      - OTEL_COLLECTOR_HOST=otel-collector
+      - OTEL_COLLECTOR_PORT_GRPC=4317
+      - OTEL_COLLECTOR_PORT_HTTP=4318
+    ports:
+      - 8080:8080
+    logging: *logging
+    depends_on:
+      - loki
+
   ######################
   ### backend
   ######################
@@ -52,7 +64,7 @@ services:
       - grafana-data:/var/lib/grafana
       - ./config/grafana.ini:/etc/grafana/grafana.ini
       - ./provisioning/:/etc/grafana/provisioning/
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.1.0
     ports:
       - "3000:3000"
     logging: *logging
@@ -61,7 +73,7 @@ services:
     restart: unless-stopped
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.53.1
     ports:
       - "9090:9090"
     command:
@@ -81,7 +93,7 @@ services:
     restart: unless-stopped
 
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.8.2
     container_name: node-exporter
     restart: unless-stopped
     volumes:
@@ -100,7 +112,7 @@ services:
       - loki
 
   process-exporter:
-    image: ncabatoff/process-exporter:latest
+    image: ncabatoff/process-exporter:0.8.1
     restart: unless-stopped
     volumes:
       - /proc:/host/proc:ro
@@ -125,7 +137,7 @@ services:
     restart: unless-stopped
 
   alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:v1.2.1
     volumes:
       - ./config/config.alloy:/etc/alloy/config.alloy
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -148,13 +160,13 @@ services:
     restart: unless-stopped
 
   pyroscope:
-    image: grafana/pyroscope:latest
+    image: grafana/pyroscope:1.6.1
     ports:
       - 4040:4040
     logging: *logging
   
   tempo-init:
-    image: &tempoImage grafana/tempo:latest
+    image: &tempoImage grafana/tempo:2.5.0
     user: root
     entrypoint:
       - "chown"
@@ -195,18 +207,6 @@ services:
       - loki
     logging: *logging
     restart: unless-stopped
-
-  proxy:
-    build: ./proxy
-    environment:
-      - OTEL_COLLECTOR_HOST=otel-collector
-      - OTEL_COLLECTOR_PORT_GRPC=4317
-      - OTEL_COLLECTOR_PORT_HTTP=4318
-    ports:
-      - 8080:8080
-    logging: *logging
-    depends_on:
-      - loki
 
 
 volumes:
