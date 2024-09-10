@@ -7,17 +7,16 @@ const { createCanvas, createImageData } = require('canvas')
 router.get('/', function (req, res, next) {
 
   const x_min = -1.5, y_min = -1.0, x_max = +0.5, y_max = +1.0;
-  const width = 1200, height = 1200;
+  const width = 2400, height = 2400;
   const max_iter = 1 << 7 - 1
 
 
   var canvas = generateMandelbrotSet(width, height, x_min, x_max, y_min, y_max, max_iter);
-  const buffer = canvas.toBuffer('image/jpeg', { quality: 1.00 })
+  // const buffer = canvas.toBuffer('image/jpeg', { quality: 1.00 })
+  // res.writeHead(200, { 'content-type': 'image/jpeg' });
+  // res.end(buffer, 'binary')
+  res.send("OK");
 
-
-
-  res.writeHead(200, { 'content-type': 'image/jpeg' });
-  res.end(buffer, 'binary')
 });
 
 const isDiverged = function (x0, y0, max_iter) {

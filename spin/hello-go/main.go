@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
-	"image/jpeg"
 	"net/http"
 
 	spinhttp "github.com/fermyon/spin/sdk/go/v2/http"
@@ -16,12 +16,17 @@ func init() {
 func get_mandelbrot(w http.ResponseWriter, r *http.Request) {
 	const (
 		xmin, ymin, xmax, ymax = -1.5, -1.0, +0.5, +1.0
-		width, height          = 1200, 1200
+		width, height          = 2400, 2400
 		max_iter               = 1<<7 - 1
 	)
 	img := generate_mandelbrot_img(width, height, xmin, xmax, ymin, ymax, max_iter)
-	w.Header().Set("content-type", "image/jpeg")
-	jpeg.Encode(w, img, &jpeg.Options{Quality: 100}) // NOTE: ignoring errors
+
+	// NOTE: 計測のため、エンコードはコメントアウト
+
+	// w.Header().Set("content-type", "image/jpeg")
+	// jpeg.Encode(w, img, &jpeg.Options{Quality: 100}) // NOTE: ignoring errors
+
+	fmt.Fprintf(w, "mandelbrot by wasm-go, %v", img.Rect.Size())
 
 }
 
