@@ -290,8 +290,8 @@
             "uid": "prometheus"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "histogram_quantile(0.99, sum by(le, http_url) (rate(duration_milliseconds_bucket{span_name=\"ingress\"}[$__range])))",
+          "editorMode": "code",
+          "expr": "sum by(http_url) (rate(duration_milliseconds_sum{span_name=\"ingress\"}[$__rate_interval])) / sum by(http_url) (rate(duration_milliseconds_count{span_name=\"ingress\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -301,7 +301,7 @@
           "useBackend": false
         }
       ],
-      "title": "レイテンシp99",
+      "title": "平均レイテンシ",
       "type": "stat"
     },
     {
@@ -465,7 +465,32 @@
           },
           "unit": "ms"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "http://proxy:8080/wasm/rust"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 6,
@@ -494,8 +519,8 @@
             "uid": "prometheus"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "histogram_quantile(0.99, sum by(le, http_url) (rate(duration_milliseconds_bucket{span_name=\"ingress\"}[1m])))",
+          "editorMode": "code",
+          "expr": "sum by(http_url) (rate(duration_milliseconds_sum{span_name=\"ingress\"}[$__rate_interval])) / sum by(http_url) (rate(duration_milliseconds_count{span_name=\"ingress\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -505,7 +530,7 @@
           "useBackend": false
         }
       ],
-      "title": "レイテンシ p99",
+      "title": "平均レイテンシ ",
       "type": "timeseries"
     },
     {
@@ -1468,12 +1493,12 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "New dashboard",
+  "title": "Wasm",
   "uid": "f83b42d4-e502-4466-b504-8d28f4f26445",
   "version": 1,
   "weekStart": ""
