@@ -5,8 +5,9 @@ const base_url = 'http://proxy:8080';
 
 export const options = {
   stages: [
-    { duration: '10m', target: 10 },
-    { duration: '15m', target: 10 },
+    { duration: '2m', target: 5 },
+    { duration: '10m', target: 5 },
+    { duration: '2m', target: 0 },
   ],
 };
 
@@ -21,7 +22,7 @@ export default function () {
   paths.forEach((path) => {
     const res = http.get(base_url + path);
     const success = check(res, { 'status was 200': (r) => r.status === 200 });
+    sleep(1); // seconds
   })
 
-  sleep(1); // seconds
 }

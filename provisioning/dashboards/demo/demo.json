@@ -291,7 +291,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(http_url) (rate(duration_milliseconds_sum{span_name=\"ingress\"}[$__rate_interval])) / sum by(http_url) (rate(duration_milliseconds_count{span_name=\"ingress\"}[$__rate_interval]))",
+          "expr": "sum by(http_url) (rate(duration_milliseconds_sum{span_name=\"ingress\"}[1m])) /sum by(http_url) (rate(duration_milliseconds_count{span_name=\"ingress\"}[1m]))",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -465,32 +465,7 @@
           },
           "unit": "ms"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "http://proxy:8080/wasm/rust"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 6,
@@ -520,7 +495,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(http_url) (rate(duration_milliseconds_sum{span_name=\"ingress\"}[$__rate_interval])) / sum by(http_url) (rate(duration_milliseconds_count{span_name=\"ingress\"}[$__rate_interval]))",
+          "expr": "sum by(http_url) (rate(duration_milliseconds_sum{span_name=\"ingress\"}[1m])) /sum by(http_url) (rate(duration_milliseconds_count{span_name=\"ingress\"}[1m]))",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -530,7 +505,7 @@
           "useBackend": false
         }
       ],
-      "title": "平均レイテンシ ",
+      "title": "平均レイテンシ",
       "type": "timeseries"
     },
     {
@@ -1493,13 +1468,13 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Wasm",
-  "uid": "f83b42d4-e502-4466-b504-8d28f4f26445",
+  "title": "Wasm Container Demo",
+  "uid": "wasm-container-demo",
   "version": 1,
   "weekStart": ""
 }
