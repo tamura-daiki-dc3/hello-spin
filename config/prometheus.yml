@@ -41,6 +41,11 @@ scrape_configs:
       - targets:
           - "otel-collector:8888"
 
+  - job_name: otelcol
+    static_configs:
+      - targets:
+          - "otel-collector:9464"
+
 # remote_write:
 #   - url: http://victoriametrics:8428/api/v1/write
 

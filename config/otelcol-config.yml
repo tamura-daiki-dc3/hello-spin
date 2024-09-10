@@ -20,11 +20,16 @@ exporters:
     endpoint: "tempo:4317"
     tls:
       insecure: true
-  prometheusremotewrite:
-    endpoint: http://prometheus:9090/api/v1/write
-    tls:
-      insecure: true
-    send_metadata: true
+  # prometheusremotewrite:
+  #   endpoint: http://prometheus:9090/api/v1/write
+  #   tls:
+  #     insecure: true
+  #   send_metadata: true
+  #   resource_to_telemetry_conversion:
+  #     enabled: true
+
+  prometheus:
+    endpoint: "0.0.0.0:9464"
     resource_to_telemetry_conversion:
       enabled: true
 
@@ -57,7 +62,7 @@ service:
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [filter, batch]
-      exporters: [prometheusremotewrite]
+      exporters: [prometheus]
 
     logs:
       receivers: [otlp]
