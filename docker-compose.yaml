@@ -51,6 +51,22 @@ services:
     depends_on:
       - loki
 
+  k6:
+    image: grafana/k6:latest
+    logging: *logging
+    command: ["run", 
+      "--out", "experimental-prometheus-rw",
+      "/test.js",
+      ]
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+    volumes:
+      - ./k6/test.js:/test.js
+    restart: unless-stopped
+    depends_on:
+      - proxy
+      - loki
+
   ######################
   ### backend
   ######################
@@ -124,6 +140,9 @@ services:
       - 9256
     depends_on:
       - loki
+      - spin
+      - golang
+      - nodejs
     logging: *logging
 
   loki:
