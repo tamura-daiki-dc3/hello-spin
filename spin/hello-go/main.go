@@ -20,7 +20,7 @@ func get_mandelbrot(w http.ResponseWriter, r *http.Request) {
 		width, height          = 1200, 1200
 		max_iter               = 1<<7 - 1
 	)
-	fmt.Println("Handling request to %v", r.Header.Get("spin-full-url"))
+	fmt.Printf("Handling request to %v\n", r.Header.Get("spin-full-url"))
 	img := generate_mandelbrot_img(width, height, xmin, xmax, ymin, ymax, max_iter)
 	w.Header().Set("content-type", "image/jpeg")
 	jpeg.Encode(w, img, &jpeg.Options{Quality: 100}) // NOTE: ignoring errors
