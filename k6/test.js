@@ -5,9 +5,9 @@ const base_url = 'http://proxy:8080';
 
 export const options = {
   stages: [
-    { duration: '2m', target: 5 },
-    { duration: '10m', target: 5 },
-    { duration: '2m', target: 0 },
+    { duration: '1m', target: 2 },
+    { duration: '10m', target: 2 },
+    { duration: '1m', target: 0 },
   ],
 };
 
