@@ -1369,39 +1369,6 @@
         "type": "query"
       },
       {
-        "allValue": ".*",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "prometheus"
-        },
-        "definition": "label_values()",
-        "hide": 0,
-        "includeAll": true,
-        "label": "receiver",
-        "multi": true,
-        "name": "receiver",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values()",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
         "current": {
           "selected": true,
           "text": [
@@ -1427,39 +1394,6 @@
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": ".*",
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "prometheus"
-        },
-        "definition": "label_values()",
-        "hide": 0,
-        "includeAll": true,
-        "label": "exporter",
-        "multi": true,
-        "name": "exporter",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values()",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
