@@ -7,7 +7,7 @@ const { createCanvas, createImageData } = require('canvas')
 router.get('/', function (req, res, next) {
 
   const x_min = -1.5, y_min = -1.0, x_max = +0.5, y_max = +1.0;
-  const width = 2400, height = 2400;
+  const width = 1200, height = 1200;
   const max_iter = 1 << 7 - 1
 
 
