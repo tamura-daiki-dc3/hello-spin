@@ -4,7 +4,6 @@ use spin_sdk::http_component;
 /// A simple Spin HTTP component.
 #[http_component]
 fn handle_hello_rust(req: Request) -> anyhow::Result<impl IntoResponse> {
-    println!("Handling request to {:?}", req.header("spin-full-url"));
 
     generate_mandelbrot_set(1200, 1200, -1.5, 0.5, -1.0, 1.0, 1 << 7 - 1);
     //  TODO
