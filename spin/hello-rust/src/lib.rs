@@ -6,7 +6,7 @@ use spin_sdk::http_component;
 fn handle_hello_rust(req: Request) -> anyhow::Result<impl IntoResponse> {
     println!("Handling request to {:?}", req.header("spin-full-url"));
 
-    generate_mandelbrot_set(2400, 2400, -1.5, 0.5, -1.0, 1.0, 1 << 7 - 1);
+    generate_mandelbrot_set(1200, 1200, -1.5, 0.5, -1.0, 1.0, 1 << 7 - 1);
     //  TODO
     // Vec<u8> を jpeg エンコードしてHTTP Responseで返却する
     //
