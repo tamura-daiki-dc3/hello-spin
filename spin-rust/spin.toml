@@ -1,0 +1,20 @@
+spin_manifest_version = 2
+
+[application]
+name = "wasm-spin"
+version = "0.1.0"
+authors = ["Daiki Tamura <dtamura23@outlook.jp>"]
+description = ""
+
+[[trigger.http]]
+route = "/wasm/rust"
+component = "hello-rust"
+
+[component.hello-rust]
+source = "hello-rust/target/wasm32-wasi/release/hello_rust.wasm"
+allowed_outbound_hosts = []
+[component.hello-rust.build]
+command = "cargo build --target wasm32-wasi --release"
+workdir = "hello-rust"
+watch = ["src/**/*.rs", "Cargo.toml"]
+

@@ -39,8 +39,10 @@ static_resources:
                           route: { cluster: golang}
                         - match: { prefix: "/nodejs" }
                           route: { cluster: nodejs}
-                        - match: { prefix: "/wasm" }
-                          route: { cluster: spin}
+                        - match: { path: "/wasm/go" }
+                          route: { cluster: spin-go}
+                        - match: { path: "/wasm/rust" }
+                          route: { cluster: spin-rust}
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config:
@@ -100,17 +102,29 @@ static_resources:
                     socket_address:
                       address: nodejs
                       port_value: 3000
-    - name: spin
+    - name: spin-go
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: spin
+        cluster_name: spin-go
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
-                      address: spin
+                      address: spin-go
+                      port_value: 80
+    - name: spin-rust
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: spin-rust
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: spin-rust
                       port_value: 80
 admin:
   address:

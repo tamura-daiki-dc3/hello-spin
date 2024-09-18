@@ -12,8 +12,18 @@ services:
   ######################
   ### Apps
   ######################
-  spin:
-    build: ./spin
+  spin-go:
+    build: ./spin-go
+    platform: wasi/wasm
+    runtime: io.containerd.spin.v2
+    ports:
+      - 80
+    command: ["/"]
+    logging: *logging
+    depends_on:
+      - loki
+  spin-rust:
+    build: ./spin-rust
     platform: wasi/wasm
     runtime: io.containerd.spin.v2
     ports:
@@ -140,7 +150,8 @@ services:
       - 9256
     depends_on:
       - loki
-      - spin
+      - spin-go
+      - spin-rust
       - golang
       - nodejs
     logging: *logging
